@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>
-#include <cblas.h>
 #include <string.h>
+#include <cblas.h>
+#include "Matrix_Multiplication.h"
 
 int main(int argc, char * argv[])
 {
@@ -72,7 +72,14 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Bcol * Arow);
 		Outmat2 = (double *)malloc(sizeof(double) * Ccol * Arow);
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Arow,Bcol,Acol,1,Amat,Acol,Bmat,Bcol,0.0,Outmat1,Bcol);
+		Outmat1 = Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol);
+		
+
+	for (i = 0; i <  Arow; i++){
+        	for (j = 0; j < Bcol; j++){
+            		printf("%lf ", Outmat1[j+i*Bcol]);
+		}
+	}
 		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Arow,Ccol,Bcol,1,Outmat1,Bcol,Cmat,Ccol,0.0,Outmat2,Ccol);
 
 		//Output ABC Result to a File
