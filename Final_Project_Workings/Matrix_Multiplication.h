@@ -6,7 +6,7 @@ double* Matrix_Multiplication( double* Amat, double* Bmat, int Arow, int Acol, i
 	double *Outmat;
 	Outmat = (double *)malloc(sizeof(double) * Arow * Bcol);
 	
-	//Computing Matrix Produce
+	//Computing Matrix Product
 	for (int i=0;i<Arow;i++){
 		for(int j=0;j<Bcol;j++){
 			for(int k=0;k<Acol;k++){
