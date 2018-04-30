@@ -152,10 +152,15 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		printf("The matrix operation A+BC cannot be computed\n");
 		fprintf(File3,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
-		double *Outmat1;
+		//Defining Matrix Output Size
+		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Acol * Arow);
-		Outmat1 = Amat;
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Brow,Ccol,Bcol,1,Bmat,Bcol,Cmat,Ccol,1,Outmat1,Acol);
+		Outmat2 = (double *)malloc(sizeof(double) * Acol * Arow);
+		
+		//Computing Operation
+		int Elements = Arow*Acol, Sign = 1;
+		Outmat1 = Matrix_Multiplication(Bmat,Cmat,Brow,Bcol,Crow,Ccol);
+		Outmat2 = Matrix_Addition(Amat, Outmat1,Elements,Sign);
 
 		//Output A+BC Result to a File
 		for (i = 0;i<Arow;i++){
@@ -188,10 +193,15 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		printf("The matrix operation AB-C cannot be computed\n");
 		fprintf(File4,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
-		double *Outmat1;
+		//Defining the Output Matrix Size
+		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Ccol * Crow);
-		Outmat1 = Cmat;
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Arow,Bcol,Acol,1,Amat,Acol,Bmat,Bcol,-1,Outmat1,Ccol);
+		Outmat2 = (double *)malloc(sizeof(double) * Ccol * Crow);
+
+		//Computing Operation
+		int Elements = Ccol*Crow, Sign = -1;
+		Outmat1 = Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol);
+		Outmat2 = Matrix_Addition(Outmat1,Cmat,Elements,Sign);
 
 		//Output AB-C Result to a File
 		for (i = 0;i<Crow;i++){
@@ -224,10 +234,15 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		printf("The matrix operation A-BC cannot be computed\n");
 		fprintf(File5,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
-		double *Outmat1;
+		//Defingin Output Matrix Size
+		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Acol * Arow);
-		Outmat1 = Amat;
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Brow,Ccol,Bcol,1,Bmat,Bcol,Cmat,Ccol,-1,Outmat1,Acol);
+		Outmat2 = (double *)malloc(sizeof(double) * Acol * Arow);
+		
+		//Computing Matrix Operations
+		int Elements = Acol*Arow, Sign = -1;
+		Outmat1 = Matrix_Multiplication(Bmat,Cmat,Brow,Bcol,Crow,Ccol);
+		Outmat2 = Matrix_Addition(Amat,Outmat1,Elements, Sign);
 
 		//Output A-BC Result to a File
 		for (i = 0;i<Arow;i++){
