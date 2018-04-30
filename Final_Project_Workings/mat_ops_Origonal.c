@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+<<<<<<< HEAD:Final_Project_Workings/mat_ops.c
+#include <time.h>
+=======
 #include <cblas.h>
 #include "Matrix_Multiplication.h"
 #include "Matrix_Addition.h"
+>>>>>>> d0f6b0a6760922b56a9e33667260cdf0bd265036:Final_Project_Workings/mat_ops_Origonal.c
 
 int main(int argc, char * argv[])
 {
