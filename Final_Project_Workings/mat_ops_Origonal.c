@@ -8,6 +8,12 @@
 
 int main(int argc, char * argv[])
 {
+
+	// Begin clock
+	clock_t begin, end;
+	double time_spent;
+	begin = clock();
+
 	FILE *AFile;
 	FILE *BFile;
 	FILE *CFile;
@@ -154,8 +160,8 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 	}else{
 		//Defining Matrix Output Size
 		double *Outmat1,*Outmat2;
-		Outmat12 = (double *)malloc(sizeof(double) * Acol * Arow);
-		Outmat22 = (double *)malloc(sizeof(double) * Acol * Arow);
+		Outmat1 = (double *)malloc(sizeof(double) * Acol * Arow);
+		Outmat2 = (double *)malloc(sizeof(double) * Acol * Arow);
 		
 		//Computing Operation
 		int Elements = Arow*Acol;
@@ -258,6 +264,10 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 			}
 		}
 		fclose(File5);
+		// Stop clock
+		end = clock();
+		time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+		printf("Time spent computing Original Code: %lf [sec]\n",time_spent);
 		
 	}
 }

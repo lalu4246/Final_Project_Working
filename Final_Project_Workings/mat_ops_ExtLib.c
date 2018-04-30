@@ -7,6 +7,11 @@
 
 int main(int argc, char * argv[])
 {
+	// Begin clock
+	clock_t begin, end;
+	double time_spent;
+	begin = clock();
+
 	FILE *AFile;
 	FILE *BFile;
 	FILE *CFile;
@@ -229,6 +234,10 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 			}
 		}
 		fclose(File5);
+		// Stop clock
+		end = clock();
+		time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+		printf("Time spent computing External Library Code: %lf [sec]\n",time_spent);
 		
 	}
 }
