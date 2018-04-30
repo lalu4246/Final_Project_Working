@@ -154,22 +154,23 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 	}else{
 		//Defining Matrix Output Size
 		double *Outmat1,*Outmat2;
-		Outmat1 = (double *)malloc(sizeof(double) * Acol * Arow);
-		Outmat2 = (double *)malloc(sizeof(double) * Acol * Arow);
+		Outmat12 = (double *)malloc(sizeof(double) * Acol * Arow);
+		Outmat22 = (double *)malloc(sizeof(double) * Acol * Arow);
 		
 		//Computing Operation
-		int Elements = Arow*Acol, Sign = 1;
-		Outmat1 = Matrix_Multiplication(Bmat,Cmat,Brow,Bcol,Crow,Ccol);
-		Outmat2 = Matrix_Addition(Amat, Outmat1,Elements,Sign);
+		int Elements = Arow*Acol;
+		int Sign = 1;
+		Outmat1 = Matrix_Multiplication(Bmat, Cmat, Brow, Bcol, Crow, Ccol);
+		Outmat2 = Matrix_Addition(Outmat1, Amat, Elements, Sign);
 
 		//Output A+BC Result to a File
 		for (i = 0;i<Arow;i++){
 			for(j = 0;j<Acol;j++){
 				if (j == (Acol-1)){				
-					fprintf(File3,"%lf\n",Outmat1[j+i*Acol]);
+					fprintf(File3,"%lf\n",Outmat2[j+i*Acol]);
 				}
 				else{
-					fprintf(File3,"%lf,",Outmat1[j+i*Acol]);
+					fprintf(File3,"%lf,",Outmat2[j+i*Acol]);
 				}
 				
 			}
@@ -207,10 +208,10 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		for (i = 0;i<Crow;i++){
 			for(j = 0;j<Ccol;j++){
 				if (j == (Ccol-1)){				
-					fprintf(File4,"%lf\n",Outmat1[j+i*Ccol]);
+					fprintf(File4,"%lf\n",Outmat2[j+i*Ccol]);
 				}
 				else{
-					fprintf(File4,"%lf,",Outmat1[j+i*Ccol]);
+					fprintf(File4,"%lf,",Outmat2[j+i*Ccol]);
 				}
 				
 			}
@@ -248,10 +249,10 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		for (i = 0;i<Arow;i++){
 			for(j = 0;j<Acol;j++){
 				if (j == (Acol-1)){				
-					fprintf(File5,"%lf\n",Outmat1[j+i*Acol]);
+					fprintf(File5,"%lf\n",Outmat2[j+i*Acol]);
 				}
 				else{
-					fprintf(File5,"%lf,",Outmat1[j+i*Acol]);
+					fprintf(File5,"%lf,",Outmat2[j+i*Acol]);
 				}
 				
 			}
