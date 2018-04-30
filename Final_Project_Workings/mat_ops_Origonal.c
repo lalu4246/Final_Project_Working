@@ -5,6 +5,7 @@
 #include <time.h>
 #include "Matrix_Multiplication.h"
 #include "Matrix_Addition.h"
+#include <omp.h>
 
 int main(int argc, char * argv[])
 {

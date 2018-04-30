@@ -12,7 +12,7 @@ int main(int argc, char * argv[])
 	BFile = fopen(argv[2],"w");
 	CFile = fopen(argv[3],"w");
 
-	int n = 100;
+	int n = 1000;
 
 	//Preallocate Mats
 	double *A,*B,*C;

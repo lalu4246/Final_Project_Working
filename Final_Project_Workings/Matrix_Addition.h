@@ -7,7 +7,6 @@ double* Matrix_Addition( double* Amat, double* Bmat, int Elements, int Sign)
 	Outmat = (double *)malloc(sizeof(double) *Elements);
 
 	//Computing Matrix Addition or Subrraction
-	
 	for (int i = 0; i<Elements; i++){
 		Outmat[i] = Amat[i]+Sign*Bmat[i];
 	}
