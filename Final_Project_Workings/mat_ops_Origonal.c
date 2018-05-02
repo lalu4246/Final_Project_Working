@@ -3,8 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
-#include "Matrix_Multiplication.h"
-#include "Matrix_Addition.h"
+
 
 int main(int argc, char * argv[])
 {
@@ -84,8 +83,8 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		Outmat2 = (double *)malloc(sizeof(double) * Ccol * Arow);
 		
 		//Computing Operation
-		Outmat1 = Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol);
-		Outmat2 = Matrix_Multiplication(Outmat1,Cmat,Arow,Bcol,Crow,Ccol);
+		Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol,Outmat1);
+		Matrix_Multiplication(Outmat1,Cmat,Arow,Bcol,Crow,Ccol,Outmat2);
 
 		//Output ABC Result to a File
 		for (i = 0;i<Arow;i++){
@@ -126,8 +125,8 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		
 		int Elements = Crow*Ccol;
 		int Sign = 1;
-		Outmat1 = Matrix_Multiplication(Amat, Bmat, Arow, Acol, Brow, Bcol);
-		Outmat2 = Matrix_Addition(Outmat1, Cmat, Elements, Sign);
+		Matrix_Multiplication(Amat, Bmat, Arow, Acol, Brow, Bcol,Outmat1);
+		Matrix_Addition(Outmat1, Cmat, Elements, Sign,Outmat2);
 
 		//Output AB+C Result to a File
 		for (i = 0;i<Arow;i++){
@@ -166,8 +165,8 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		//Computing Operation
 		int Elements = Arow*Acol;
 		int Sign = 1;
-		Outmat1 = Matrix_Multiplication(Bmat, Cmat, Brow, Bcol, Crow, Ccol);
-		Outmat2 = Matrix_Addition(Outmat1, Amat, Elements, Sign);
+		Matrix_Multiplication(Bmat, Cmat, Brow, Bcol, Crow, Ccol,Outmat1);
+		Matrix_Addition(Outmat1, Amat, Elements, Sign,Outmat2);
 
 		//Output A+BC Result to a File
 		for (i = 0;i<Arow;i++){
@@ -207,8 +206,8 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 
 		//Computing Operation
 		int Elements = Ccol*Crow, Sign = -1;
-		Outmat1 = Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol);
-		Outmat2 = Matrix_Addition(Outmat1,Cmat,Elements,Sign);
+		Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol,Outmat1);
+		Matrix_Addition(Outmat1,Cmat,Elements,Sign,Outmat2);
 
 		//Output AB-C Result to a File
 		for (i = 0;i<Crow;i++){
@@ -248,8 +247,8 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		
 		//Computing Matrix Operations
 		int Elements = Acol*Arow, Sign = -1;
-		Outmat1 = Matrix_Multiplication(Bmat,Cmat,Brow,Bcol,Crow,Ccol);
-		Outmat2 = Matrix_Addition(Amat,Outmat1,Elements, Sign);
+		Matrix_Multiplication(Bmat,Cmat,Brow,Bcol,Crow,Ccol,Outmat1);
+		Matrix_Addition(Amat,Outmat1,Elements, Sign,Outmat2);
 
 		//Output A-BC Result to a File
 		for (i = 0;i<Arow;i++){
@@ -263,11 +262,12 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 				
 			}
 		}
-		fclose(File5);
-		// Stop clock
-		end = clock();
-		time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-		printf("Time spent computing Original Code: %lf [sec]\n",time_spent);
+		
 		
 	}
+	fclose(File5);
+	// Stop clock
+	end = clock();
+	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("Time spent computing Original Code: %lf [sec]\n",time_spent);
 }

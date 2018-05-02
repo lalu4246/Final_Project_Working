@@ -3,10 +3,36 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
-#include "Matrix_Multiplication.h"
-#include "Matrix_Addition.h"
 #include <omp.h>
-#include <cblas.h>
+
+void Matrix_Multiplication( double* Amat, double* Bmat, int Arow, int Acol, int Brow, int Bcol, double *Outmat)
+{
+	/*This Function Multiplies two Matricies Assuming the Dimensions Match*/
+	
+	//Computing Matrix Product
+	int i, j, k;
+	#pragma omp parallel for private(i, j, k) shared(Amat, Bmat, Outmat)
+	for (i=0;i<Arow;i++){
+		for(j=0;j<Bcol;j++){
+			for(k=0;k<Acol;k++){
+				Outmat[j+i*Bcol] += Amat[k+i*Acol]*Bmat[j+k*Bcol];
+			}
+			
+		}
+	}
+}
+
+void Matrix_Addition( double* Amat, double* Bmat, int Elements, int Sign, double *Outmat)
+{
+	/*This Function Adds or Subtracts two Matricies Assuming the Dimensions Match*/
+
+	//Computing Matrix Addition or Subrraction
+	#pragma omp parallel for private(i) shared(Outmat, Amat, Bmat)
+	for (int i = 0; i<Elements; i++){
+		Outmat[i] = Amat[i]+Sign*Bmat[i];
+	}
+
+}
 
 int main(int argc, char * argv[])
 {
@@ -16,7 +42,6 @@ int main(int argc, char * argv[])
 	double time_spent;
 	begin = clock();
 
-	//Open User Specified Files
 	FILE *AFile;
 	FILE *BFile;
 	FILE *CFile;
@@ -77,15 +102,18 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 	strcat(String1,argv[3]);
 	FILE *File1 = fopen(String1,"w");
 
-	if (Acol != Brow || Bcol != Crow){
+	if (Acol != Brow || Bcol != Crow){//Check to see if this operation can be completed.
 		printf("The matrix operation ABC cannot be computed\n");
 		fprintf(File1,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
+		//Defining Output Matrix Size
 		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Bcol * Arow);
 		Outmat2 = (double *)malloc(sizeof(double) * Ccol * Arow);
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Arow,Bcol,Acol,1,Amat,Acol,Bmat,Bcol,0.0,Outmat1,Bcol);
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Arow,Ccol,Bcol,1,Outmat1,Bcol,Cmat,Ccol,0.0,Outmat2,Ccol);
+		
+		//Computing Operation
+		Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol,Outmat1);
+		Matrix_Multiplication(Outmat1,Cmat,Arow,Bcol,Crow,Ccol,Outmat2);
 
 		//Output ABC Result to a File
 		for (i = 0;i<Arow;i++){
@@ -113,23 +141,30 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 	strcat(String2,argv[3]);
 	FILE *File2 = fopen(String2,"w");
 
-	if (Acol != Brow || (Arow != Crow && Bcol != Ccol)){
+	if (Acol != Brow || (Arow != Crow && Bcol != Ccol)){//Check to see if this operation can be completed.
 		printf("The matrix operation AB+C cannot be computed\n");
 		fprintf(File2,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
-		double *Outmat1;
+		//Defining Output Matrix Size
+		double *Outmat1, *Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Bcol * Arow);
-		Outmat1 = Cmat;
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Arow,Bcol,Acol,1,Amat,Acol,Bmat,Bcol,1,Outmat1,Ccol);
+		Outmat2 = (double *)malloc(sizeof(double) * Ccol * Crow);
+
+		//Computing Operation
+		
+		int Elements = Crow*Ccol;
+		int Sign = 1;
+		Matrix_Multiplication(Amat, Bmat, Arow, Acol, Brow, Bcol,Outmat1);
+		Matrix_Addition(Outmat1, Cmat, Elements, Sign,Outmat2);
 
 		//Output AB+C Result to a File
 		for (i = 0;i<Arow;i++){
 			for(j = 0;j<Bcol;j++){
 				if (j == (Bcol-1)){				
-					fprintf(File2,"%lf\n",Outmat1[j+i*Bcol]);
+					fprintf(File2,"%lf\n",Outmat2[j+i*Bcol]);
 				}
 				else{
-					fprintf(File2,"%lf,",Outmat1[j+i*Bcol]);
+					fprintf(File2,"%lf,",Outmat2[j+i*Bcol]);
 				}
 				
 			}
@@ -151,19 +186,25 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		printf("The matrix operation A+BC cannot be computed\n");
 		fprintf(File3,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
-		double *Outmat1;
+		//Defining Matrix Output Size
+		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Acol * Arow);
-		Outmat1 = Amat;
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Brow,Ccol,Bcol,1,Bmat,Bcol,Cmat,Ccol,1,Outmat1,Acol);
+		Outmat2 = (double *)malloc(sizeof(double) * Acol * Arow);
+		
+		//Computing Operation
+		int Elements = Arow*Acol;
+		int Sign = 1;
+		Matrix_Multiplication(Bmat, Cmat, Brow, Bcol, Crow, Ccol,Outmat1);
+		Matrix_Addition(Outmat1, Amat, Elements, Sign,Outmat2);
 
 		//Output A+BC Result to a File
 		for (i = 0;i<Arow;i++){
 			for(j = 0;j<Acol;j++){
 				if (j == (Acol-1)){				
-					fprintf(File3,"%lf\n",Outmat1[j+i*Acol]);
+					fprintf(File3,"%lf\n",Outmat2[j+i*Acol]);
 				}
 				else{
-					fprintf(File3,"%lf,",Outmat1[j+i*Acol]);
+					fprintf(File3,"%lf,",Outmat2[j+i*Acol]);
 				}
 				
 			}
@@ -187,19 +228,24 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		printf("The matrix operation AB-C cannot be computed\n");
 		fprintf(File4,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
-		double *Outmat1;
+		//Defining the Output Matrix Size
+		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Ccol * Crow);
-		Outmat1 = Cmat;
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Arow,Bcol,Acol,1,Amat,Acol,Bmat,Bcol,-1,Outmat1,Ccol);
+		Outmat2 = (double *)malloc(sizeof(double) * Ccol * Crow);
+
+		//Computing Operation
+		int Elements = Ccol*Crow, Sign = -1;
+		Matrix_Multiplication(Amat,Bmat,Arow,Acol,Brow,Bcol,Outmat1);
+		Matrix_Addition(Outmat1,Cmat,Elements,Sign,Outmat2);
 
 		//Output AB-C Result to a File
 		for (i = 0;i<Crow;i++){
 			for(j = 0;j<Ccol;j++){
 				if (j == (Ccol-1)){				
-					fprintf(File4,"%lf\n",Outmat1[j+i*Ccol]);
+					fprintf(File4,"%lf\n",Outmat2[j+i*Ccol]);
 				}
 				else{
-					fprintf(File4,"%lf,",Outmat1[j+i*Ccol]);
+					fprintf(File4,"%lf,",Outmat2[j+i*Ccol]);
 				}
 				
 			}
@@ -223,28 +269,34 @@ printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is
 		printf("The matrix operation A-BC cannot be computed\n");
 		fprintf(File5,"This matrix operation could not be completed due to matrix dimension mismatch");
 	}else{
-		double *Outmat1;
+		//Defingin Output Matrix Size
+		double *Outmat1,*Outmat2;
 		Outmat1 = (double *)malloc(sizeof(double) * Acol * Arow);
-		Outmat1 = Amat;
-		cblas_dgemm(CblasRowMajor,CblasNoTrans,CblasNoTrans,Brow,Ccol,Bcol,1,Bmat,Bcol,Cmat,Ccol,-1,Outmat1,Acol);
+		Outmat2 = (double *)malloc(sizeof(double) * Acol * Arow);
+		
+		//Computing Matrix Operations
+		int Elements = Acol*Arow, Sign = -1;
+		Matrix_Multiplication(Bmat,Cmat,Brow,Bcol,Crow,Ccol,Outmat1);
+		Matrix_Addition(Amat,Outmat1,Elements, Sign,Outmat2);
 
 		//Output A-BC Result to a File
 		for (i = 0;i<Arow;i++){
 			for(j = 0;j<Acol;j++){
 				if (j == (Acol-1)){				
-					fprintf(File5,"%lf\n",Outmat1[j+i*Acol]);
+					fprintf(File5,"%lf\n",Outmat2[j+i*Acol]);
 				}
 				else{
-					fprintf(File5,"%lf,",Outmat1[j+i*Acol]);
+					fprintf(File5,"%lf,",Outmat2[j+i*Acol]);
 				}
 				
 			}
 		}
-		fclose(File5);
-		// Stop clock
-		end = clock();
-		time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-		printf("Time spent computing External Library Code: %lf [sec]\n",time_spent);
+		
 		
 	}
+	fclose(File5);
+	// Stop clock
+	end = clock();
+	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("Time spent computing Original Code: %lf [sec]\n",time_spent);
 }
