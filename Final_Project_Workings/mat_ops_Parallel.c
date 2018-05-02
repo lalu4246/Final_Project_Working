@@ -6,6 +6,7 @@
 #include "Matrix_Multiplication.h"
 #include "Matrix_Addition.h"
 #include <omp.h>
+#include <cblas.h>
 
 int main(int argc, char * argv[])
 {
@@ -15,6 +16,7 @@ int main(int argc, char * argv[])
 	double time_spent;
 	begin = clock();
 
+	//Open User Specified Files
 	FILE *AFile;
 	FILE *BFile;
 	FILE *CFile;
@@ -27,7 +29,7 @@ int main(int argc, char * argv[])
 	fscanf(AFile,"%d %d", &Arow, &Acol);
 	fscanf(BFile,"%d %d", &Brow, &Bcol);
 	fscanf(CFile,"%d %d", &Crow, &Ccol);
-	printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is: %d\n",Arow,Acol,Brow,Bcol,Crow,Ccol);
+printf("Arow is: %d\nAcol is: %d\nBrow is: %d\nBcol is: %d\nCrow is: %d\nCcol is: %d\n",Arow,Acol,Brow,Bcol,Crow,Ccol);
 
 	/*Read in the Matrix Values*/
 	int i, j;
@@ -40,6 +42,8 @@ int main(int argc, char * argv[])
 			fscanf(AFile, "%lf", &Amat[j+i*Acol]);
 		}
 	}
+
+	//The following code can be uncommented to output the A matrix.
 	/*for (i = 0; i <  Arow; i++){
         	for (j = 0; j < Acol; j++){
             		printf("%lf ", Amat[j+i*Acol]);
