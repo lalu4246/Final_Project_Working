@@ -9,24 +9,41 @@ void Matrix_Multiplication( double* Amat, double* Bmat, int Arow, int Acol, int 
 {
 	/*This Function Multiplies two Matricies Assuming the Dimensions Match*/
 	
+	double acc00,acc01,acc10,acc11;
+	
+	//Setting Up Cache Size
+	int cache = 20;
+	
 	//Computing Matrix Product
-	int i, j, k;
-	#pragma omp parallel for private(i, j, k) shared(Amat, Bmat, Outmat)
-	for (i=0;i<Arow;i++){
-		for(j=0;j<Bcol;j++){
-			for(k=0;k<Acol;k++){
-				Outmat[j+i*Bcol] += Amat[k+i*Acol]*Bmat[j+k*Bcol];
-			}
+	int l, i, j, k;
+	#pragma omp parallel for private(l,i,j,k) shared(Outmat, Amat, Bmat)
+	for(l = 0;l<Arow;l+=cache){
+		for (j=0;j<Brow;j+=2){
+			for(i=l;i<l+cache;i+=2){
+				acc00 = acc01 = acc10 = acc11 = 0;
+				for(k=0;k<Acol;k++){
+					acc00 += Amat[k+i*Acol]*Bmat[j+k*Bcol];
+					acc01 += Amat[k+i*Acol]*Bmat[(j+1)+k*Bcol];
+					acc10 += Amat[k+(i+1)*Acol]*Bmat[j+k*Bcol];
+					acc11 += Amat[k+(i+1)*Acol]*Bmat[(j+1)+k*Bcol];
+				}
+				Outmat[j+i*Bcol] = acc00;
+				Outmat[(j+1)+i*Bcol] = acc01;
+				Outmat[j+(i+1)*Bcol] = acc10;
+				Outmat[(j+1)+(i+1)*Bcol] = acc11;
 			
+			}
 		}
 	}
 }
+
 
 void Matrix_Addition( double* Amat, double* Bmat, int Elements, int Sign, double *Outmat)
 {
 	/*This Function Adds or Subtracts two Matricies Assuming the Dimensions Match*/
 
 	//Computing Matrix Addition or Subrraction
+	int i;
 	#pragma omp parallel for private(i) shared(Outmat, Amat, Bmat)
 	for (int i = 0; i<Elements; i++){
 		Outmat[i] = Amat[i]+Sign*Bmat[i];
