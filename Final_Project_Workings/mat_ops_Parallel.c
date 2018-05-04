@@ -5,6 +5,7 @@
 #include <time.h>
 #include <omp.h>
 
+
 void Matrix_Multiplication( double* Amat, double* Bmat, int Arow, int Acol, int Brow, int Bcol, double *Outmat)
 {
 	/*This Function Multiplies two Matricies Assuming the Dimensions Match*/
@@ -12,6 +13,7 @@ void Matrix_Multiplication( double* Amat, double* Bmat, int Arow, int Acol, int 
 	//Computing Matrix Product
 	int i, j, k;
 	#pragma omp parallel for private(i, j, k) shared(Amat, Bmat, Outmat)
+	omp_set_num_threads(8);
 	for (i=0;i<Arow;i++){
 		for(j=0;j<Bcol;j++){
 			for(k=0;k<Acol;k++){
@@ -28,6 +30,7 @@ void Matrix_Addition( double* Amat, double* Bmat, int Elements, int Sign, double
 	int i;
 	//Computing Matrix Addition or Subrraction
 	#pragma omp parallel for private(i) shared(Outmat, Amat, Bmat)
+	omp_set_num_threads(8);
 	for (int i = 0; i<Elements; i++){
 		Outmat[i] = Amat[i]+Sign*Bmat[i];
 	}
@@ -41,6 +44,8 @@ int main(int argc, char * argv[])
 	clock_t begin, end;
 	double time_spent;
 	begin = clock();
+	
+	
 
 	FILE *AFile;
 	FILE *BFile;
