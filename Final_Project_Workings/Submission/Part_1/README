@@ -1,0 +1,19 @@
+There are three main scrips included in this folder. The makefile for part 1 will compile each of these main scripts.
+The following is a description about how to run each file:
+
+Origonal Unedited Matrix Multiplication:
+	Name: mat_ops_Origonal.c
+	How To Run: ./Opt_Origonal A B C
+
+
+Optimization Using Cache Oblivious Matrix Multiplication:
+	Name: mat_ops_OptCache.c
+	How To Run: ./Opt_Cache A B C
+
+Optimization Using External Libraries:
+	Name: mat_ops_ExtLib.c
+	How To Run: ./Opt_Ext_Lib A B C
+
+
+*NOTE: please run the makefile before running any of the code
+*NOTE: A B and C are the matricies you desire to multiply and add

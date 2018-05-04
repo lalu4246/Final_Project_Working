@@ -1,0 +1,10 @@
+There is only a single code file included for this part of the assingment. 
+*Please run the makefile to compile the code before running
+
+Once the makefile has been called, please type the following line into the terminal before running:
+
+export OMP_NUM_THREADS=#
+
+Here # is the number of processors you would like the code to use when running. 
+
+	How To Run the Code: ./Opt_Parallel A B C
